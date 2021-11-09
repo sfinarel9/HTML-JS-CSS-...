@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>Snowflake Project 2020</title>
+
+</head>
+
+<body>
+	<canvas width="1300" height="600" id="mycanvas" style="background-color: rgb(204, 232, 240);">
+	</canvas>
+	<script>
+		let cnv = document.getElementById("mycanvas");
+		let ctx = cnv.getContext("2d");
+
+		let snow = []; //array with all snowflakes
+		let Angle = Math.PI / 10;
+		let totalSnowflakes = 180;
+
+		for (let i = 0; i < totalSnowflakes; i++) {   //create flakes
+
+			x = cnv.width * Math.random();
+			y = -1000 * Math.random();
+			let r = Math.floor(Math.random() * 256);
+			let g = Math.floor(Math.random() * 256);
+			let b = Math.floor(Math.random() * 256);
+			let rgb = 'rgb(' + r + ',' + g + ',' + b + ')';   //Create random colour
+
+			let flake = { x: x - 50, y: y, color: rgb, angle: Angle };
+			snow.push(flake);
+			
+		}
+
+		function create_snowflake(x, y, Ang) {     //SnowFlake create
+			ctx.save();
+			ctx.translate(x, y);
+			ctx.rotate(Ang);
+
+			let snow_length = 24;
+			let first_wing = snow_length / 3;
+			let second_wing = (snow_length / 2)+2;
+
+			for (let i = 0; i < 6; i++) {
+
+				ctx.lineWidth = 1.5;
+				ctx.beginPath();
+				ctx.moveTo(0, 0);
+				ctx.lineTo(snow_length, 0);
+
+				ctx.moveTo(first_wing, 0);
+				ctx.lineTo(first_wing + 6, 6);
+				ctx.moveTo(first_wing, 0);
+				ctx.lineTo(first_wing + 6, -6);
+
+				ctx.moveTo(second_wing, 0);
+				ctx.lineTo(second_wing + 6, 6);
+				ctx.moveTo(second_wing, 0);
+				ctx.lineTo(second_wing + 6, -6);
+
+				ctx.stroke();
+				ctx.rotate(Math.PI * 2 / 6);
+
+			}
+			ctx.restore();
+		}
+
+		function draw_Snowflakes() {
+			ctx.clearRect(-cnv.width, -cnv.height, cnv.width * 2, cnv.height * 2);
+
+			for (let i = 0; i < snow.length; i++) {
+				let flake = snow[i];
+				flake.y = flake.y + 2;                // snowflake speed
+				ctx.strokeStyle = flake.color;
+				create_snowflake(flake.x, flake.y, flake.angle);
+
+				let ang = Math.floor(Math.random() * 5);
+				let rot = Math.floor(Math.random() * 2);
+
+				if (rot == 1) { 								//a mini animation to rotate the snowflake while it is moving 
+					flake.angle = flake.angle + ang;
+				} else {
+					flake.angle = flake.angle - ang;
+				}
+
+				flake.x = flake.x + 1.5;						// windy animation
+				
+				if (flake.y > cnv.height + 40) {                   // recreate a snowflake so that array repeats and animation never ends
+					let r = Math.floor(Math.random() * 256);
+					let g = Math.floor(Math.random() * 256);
+					let b = Math.floor(Math.random() * 256);
+					let rgb = 'rgb(' + r + ',' + g + ',' + b + ')';
+					snow[i] = { x: cnv.width * Math.random(), y: -1000 * Math.random(), color: rgb, angle: Angle };
+
+				}
+				if (flake.x > cnv.width + 40) { 			// recreate a snowflake in x=0 when its out of the canvas
+					flake.x = 0;
+				}
+			}
+			requestAnimationFrame(draw_Snowflakes);
+		}
+		draw_Snowflakes();
+
+	</script>
+
+	<footer>
+		<span class="text-muted ">&copy; 2020 [Sfinarolaki Eleftheria] - Snowflake Project 2020-21</span>
+	</footer>
+</body>
+
+</html>
